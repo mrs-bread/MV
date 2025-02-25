@@ -3,10 +3,10 @@
 //#include <cmath>
 //#include <iomanip>
 //#include <limits>
+//#define _USE_MATH_DEFINES
+//#include <math.h>
 //
 //using namespace std;
-//
-//const double PI = 3.14159265358979323846;
 //
 //double factorial(int n) {
 //    if (n == 0 || n == 1) return 1;
@@ -28,13 +28,13 @@
 //        }
 //    }
 //
-//    return (2.0 / sqrt(PI)) * sum;
+//    return (2.0 / sqrt(M_PI)) * sum;
 //}
 //
 //int main() {
 //    double x_values[] = { 0.5, 1.0, 5.0, 10.0 };
 //
-//    cout << fixed << setprecision(15);
+//    cout << fixed << setprecision(8);
 //
 //    for (int i = 0; i < 4; ++i) {
 //        double x = x_values[i];
@@ -111,7 +111,7 @@
 //#include <iomanip>
 //using namespace std;
 //
-//double testS(double x, double epsilon, int& n) {
+//double S(double x, double epsilon, int& n) {
 //    double sum1 = 0, sum2 = 0;
 //    for (int k = 1; ; k++) {
 //        double temp1 = 1 / sqrt(pow(k, 3) + x);
@@ -124,21 +124,11 @@
 //    double result = sum1 - sum2;
 //    return result;
 //}
-//double S(double x, double epsilon, int& n) {
-//    double sum = 0.0;
-//    for (int k = 1; ; ++k) {
-//        double temp = 1.0 / sqrt(k * k * k + x) - 1.0 / sqrt(k * k * k - x);
-//        sum += temp;
-//        n++;
-//        if (abs(temp) < epsilon) break;
-//    }
-//    return sum;
-//}
 //
 //double optimizedS(double x, double epsilon, int&n) {
 //    double sum = 0.0;
 //    for (int k = 1; ; ++k) {
-//        double temp = -2.0 * x / (sqrt((k * k * k + x) * (k * k * k - x)) * (sqrt(k * k * k - x) + sqrt(k * k * k + x)));
+//        double temp = -2.0 * x / (sqrt((pow(k,3) + x) * (pow(k,3) - x)) * (sqrt(pow(k,3) - x) + sqrt(pow(k,3) + x)));
 //        sum += temp;
 //        n++;
 //        if (abs(temp) < epsilon) break;
@@ -153,8 +143,8 @@
 //    int n1 = 0, n2 = 0, on1 = 0, on2 = 0;
 //    double x1 = 0.5, x2 = 0.999999999;
 //    double f1, f2, of1, of2;
-//    f1 = testS(x1, epsilon, n1);
-//    f2 = testS(x2, epsilon, n2);
+//    f1 = S(x1, epsilon, n1);
+//    f2 = S(x2, epsilon, n2);
 //    of1 = optimizedS(x1, epsilon, on1);
 //    of2 = optimizedS(x2, epsilon, on2);
 //    cout << "Исходная функция:" << endl;
@@ -183,7 +173,7 @@
 //double sum_first(double epsilon, long long& iter) {
 //    double sum = 0;
 //    for (int n = 1; ; ++n) {
-//        double temp = 1.0 / (n * n + 1.0);
+//        double temp = 1.0 / (pow(n,2) + 1.0);
 //        sum += temp;
 //        iter++;
 //        if (temp < epsilon) break;
@@ -195,7 +185,7 @@
 //double sum_second(double epsilon, long long& iter) {
 //    double sum = 0;
 //    for (int n = 1; ; ++n) {
-//        double temp = 1.0 / (pow(n, 4) * (n * n + 1.0));
+//        double temp = 1.0 / (pow(n, 4) * (pow(n,2) + 1.0));
 //        sum += temp ;
 //        iter++;
 //        if (temp <= epsilon) break; 
