@@ -283,3 +283,118 @@ int main() {
         cout << "Система не имеет решений." << endl;}
     return 0;
 }
+//3
+#include <iostream>
+#include <vector>
+#include <iomanip>
+#include <cmath>
+using namespace std;
+
+int rankk(vector<vector<double>>& matrix, vector<int>& basis_cols) {
+    int rank = 0;
+    int rows = matrix.size();
+    int cols = matrix[0].size();
+    basis_cols.clear();
+    int col = 0;
+    for (int row = 0; row < rows && col < cols; ++row) {
+        int max_row = row;
+        for (int i = row + 1; i < rows; ++i) {
+            if (abs(matrix[i][col]) > abs(matrix[max_row][col])) {
+                max_row = i;
+            }
+        }
+        if (abs(matrix[max_row][col]) < 1e-6) {
+            row--;
+            col++;
+            if (col >= cols) break;
+            continue;
+        }
+        swap(matrix[row], matrix[max_row]);
+        basis_cols.push_back(col);
+        rank++;
+        double basis = matrix[row][col];
+        for (int j = col; j < cols; ++j) {
+            matrix[row][j] /= basis;
+        }
+        for (int i = 0; i < rows; ++i) {
+            if (i != row) {
+                double factor = matrix[i][col];
+                for (int j = col; j < cols; ++j) {
+                    matrix[i][j] -= factor * matrix[row][j];
+                }
+            }
+        }
+        col++;
+    }
+    return rank;
+}
+
+int main() {
+    setlocale(LC_ALL, "RUS");
+    vector<vector<double>> A = {
+        {0.1, 0.2, 0.3},
+        {0.4, 0.5, 0.6},
+        {0.7, 0.8, 0.9}};
+    vector<double> b = { 0.1, 0.3, 0.5 };
+    vector<vector<double>> BigM = A;
+    for (size_t i = 0; i < b.size(); ++i) {
+        BigM[i].push_back(b[i]);
+    }
+    vector<vector<double>> A_copy = A;
+    vector<vector<double>> BigM_copy = BigM;
+    vector<int> basis_cols, basis_cols_big;
+    int rankA = rankk(A_copy, basis_cols);
+    int rankBig = rankk(BigM_copy, basis_cols_big);
+    cout << "Ранг матрицы A: " << rankA << endl;
+    cout << "Ранг расширенной матрицы [A|b]: " << rankBig << endl;
+    if (rankA == rankBig && rankA < A[0].size()) {
+        cout << "Система имеет множество решений." << endl;
+        vector<int> free_cols;
+        for (int i = 0; i < A[0].size(); ++i) {
+            if (find(basis_cols.begin(), basis_cols.end(), i) == basis_cols.end()) {
+                free_cols.push_back(i);
+            }
+        }
+        cout << "Базисные переменные: ";
+        for (int col : basis_cols) {
+            cout << "x" << col + 1 << " ";
+        }
+        cout << endl << "Свободные переменные: ";
+        for (int col : free_cols) {
+            cout << "x" << col + 1 << " ";
+        }
+        cout << endl << "Общее решение:" << endl;
+        vector<vector<double>> step_matrix = BigM;
+        rankk(step_matrix, basis_cols);
+        for (int i = 0; i < rankA; ++i) {
+            int basis_col_index = basis_cols[i];
+            cout << "x" << basis_col_index + 1 << " = ";
+            bool first_term = true;
+            for (int j = 0; j < free_cols.size(); ++j) {
+                double coeff = -step_matrix[i][free_cols[j]];
+                if (abs(coeff) > 1e-6) {
+                    if (!first_term) {
+                        cout << (coeff > 0 ? " + " : " - ");
+                    } else if (coeff < 0) {
+                        cout << "-";
+                    }
+                    cout << abs(coeff) << "*x" << free_cols[j] + 1;
+                    first_term = false;
+                }
+            }
+            double constant = step_matrix[i][A[0].size()];
+            if (abs(constant) > 1e-6) {
+                if (!first_term) {
+                    cout << (constant > 0 ? " + " : " - ");
+                }
+                cout << fixed << setprecision(2) << abs(constant);
+            }
+            cout << endl;
+        }
+    } else if (rankA == rankBig) {
+        cout << "Система имеет единственное решение." << endl;
+    } else {
+        cout << "Система не имеет решений." << endl;
+    }
+    return 0;
+}
