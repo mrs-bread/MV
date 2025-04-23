@@ -1,212 +1,149 @@
-//1
-//#include <iostream>
-//#include <cmath>
-//#include <iomanip>
-//#include <limits>
-//#define _USE_MATH_DEFINES
-//#include <math.h>
-//
-//using namespace std;
-//
-//double factorial(int n) {
-//    if (n == 0 || n == 1) return 1;
-//    return n * factorial(n - 1);
-//}
-//
-//double My_erf(double x, int max_terms = 1000) {
-//    double sum = 0.0;
-//    double term = 0.0;
-//    double prev_sum = 0.0;
-//
-//    for (int n = 0; n < max_terms; ++n) {
-//        term = pow(-1, n) * pow(x, 2 * n + 1) / (factorial(n) * (2 * n + 1));
-//        prev_sum = sum;
-//        sum += term;
-//
-//        if (abs(sum - prev_sum) < numeric_limits<double>::epsilon()) {
-//            break;
-//        }
-//    }
-//
-//    return (2.0 / sqrt(M_PI)) * sum;
-//}
-//
-//int main() {
-//    double x_values[] = { 0.5, 1.0, 5.0, 10.0 };
-//
-//    cout << fixed << setprecision(8);
-//
-//    for (int i = 0; i < 4; ++i) {
-//        double x = x_values[i];
-//        double calculated_erf = My_erf(x);
-//        double library_erf = erf(x);
-//
-//        cout << "x = " << x << endl;
-//        cout << "Calculated erf(x): " << calculated_erf << endl;
-//        cout << "Library erf(x): " << library_erf << endl;
-//        cout << "Difference: " << abs(calculated_erf - library_erf) << endl;
-//        cout << "----------------------------------------" << endl;
-//    }
-//
-//    return 0;
-//}
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <utility>   // для pair, если понадобится
+#include <algorithm> // для max, swap
 
-//2
+using namespace std;
 
-//#include <iostream>
-//#include <cmath>
-//#include<iomanip>
-//using namespace std;
-//
-//double phi(double x, double epsilon) {
-//    double result = 0;
-//    double temp;
-//    for (int k = 1;; k++) {
-//        temp = 1 / (k * (k + x));
-//        result += temp;
-//        if (temp <= epsilon) break;
-//    }
-//
-//    return result;
-//}
-//
-//double difference(double x, double epsilon) {
-//    double result = 0;
-//    double temp;
-//    for (int k = 1; ; k++) {
-//        temp = (1 - x) / (k * (k + x) * (k + 1));
-//        result += temp;
-//        if (temp <= epsilon) break;
-//    }
-//    return result;
-//}
-//
-//int main() {
-//    setlocale(LC_ALL, "RUS");
-//    cout << fixed << setprecision(5);
-//    cout << "Доказательство, что phi(1)=1:" << endl;
-//    double epsilon = 0.5e-8;
-//    double step = 0.1;
-//    double sum_phi = 0;
-//    for (int k = 1; k <= 10000; k++) {
-//        sum_phi += (1 / k) - (1 / (k + 1));
-//    }
-//    cout << "По формуле получим, что phi(1) = " << sum_phi << endl << "---------------------" << endl;
-//
-//    for (double x = 0.0; x <= 1.0; x += step) {
-//        double result_phi = phi(x, epsilon);
-//        double result_difference = difference(x, epsilon);
-//
-//        cout << "x = " << x << ", phi(x) = " << result_phi << ", difference(x) = " << result_difference << endl;
-//    }
-//
-//    return 0;
-//}
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
-//3
+    int n;
+    if (!(cin >> n)) return 0;
 
+    // Читаем матрицу
+    vector<vector<int>> A(n, vector<int>(n));
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            cin >> A[i][j];
 
-//#include <iostream>
-//#include <cmath>
-//#include <iomanip>
-//using namespace std;
-//
-//double S(double x, double epsilon, int& n) {
-//    double sum1 = 0, sum2 = 0;
-//    for (int k = 1; ; k++) {
-//        double temp1 = 1 / sqrt(pow(k, 3) + x);
-//        double temp2 = 1 / sqrt(pow(k, 3) - x);
-//        if (abs(temp1) < epsilon && abs(temp2) < epsilon) break;
-//        sum1 += temp1;
-//        sum2 += temp2;
-//        n++;
-//    }
-//    double result = sum1 - sum2;
-//    return result;
-//}
-//
-//double optimizedS(double x, double epsilon, int&n) {
-//    double sum = 0.0;
-//    for (int k = 1; ; ++k) {
-//        double temp = -2.0 * x / (sqrt((pow(k,3) + x) * (pow(k,3) - x)) * (sqrt(pow(k,3) - x) + sqrt(pow(k,3) + x)));
-//        sum += temp;
-//        n++;
-//        if (abs(temp) < epsilon) break;
-//    }
-//    return sum;
-//}
-//
-//int main() {
-//    cout << fixed << setprecision(6);
-//    setlocale(LC_ALL, "RUS");
-//    double epsilon = 3e-8;
-//    int n1 = 0, n2 = 0, on1 = 0, on2 = 0;
-//    double x1 = 0.5, x2 = 0.999999999;
-//    double f1, f2, of1, of2;
-//    f1 = S(x1, epsilon, n1);
-//    f2 = S(x2, epsilon, n2);
-//    of1 = optimizedS(x1, epsilon, on1);
-//    of2 = optimizedS(x2, epsilon, on2);
-//    cout << "Исходная функция:" << endl;
-//    cout << "x=0.5" << endl << "Количество итераций: " << n1 << endl << "Время: " << n1 * 500 << " mc" << endl<<"Результат: "<<abs(f1)<<endl;
-//    cout << "--------------------------" << endl;
-//    cout<<"x=0.999999999"<<endl<< "Количество итераций: " << n2 << endl << "Время: " << n2 * 500 << " mc" << endl << "Результат: " << abs(f2) << endl;
-//    cout << "--------------------------" << endl;
-//    cout << "Оптимизированная функция:" << endl;
-//    cout << "x=0.5" << endl << "Количество итераций: " << on1 << endl << "Время: " << on1 * 500 << " mc" << endl << "Результат: " << abs(of1) << endl;
-//    cout << "--------------------------" << endl;
-//    cout << "x=0.999999999" << endl << "Количество итераций: " << on2 << endl << "Время: " << on2 * 500 << " mc" << endl << "Результат: " << abs(of2) << endl;
-//    cout << "--------------------------" << endl;
-//    return 0;
-//}
+    // Построим список смежности и массив степеней
+    vector<vector<int>> adj(n);
+    vector<int> deg(n, 0);
+    for (int i = 0; i < n; i++) {
+        if (A[i][i] != 0) {
+            cout << "NO\n";
+            return 0;
+        }
+        for (int j = 0; j < n; j++) {
+            if (A[i][j]) {
+                if (A[j][i] == 0) {
+                    cout << "NO\n";
+                    return 0;
+                }
+                adj[i].push_back(j);
+                deg[i]++;
+            }
+        }
+    }
 
-//4
+    // Проверка связности (BFS от 0)
+    vector<char> vis(n, 0);
+    queue<int> q;
+    vis[0] = 1;
+    q.push(0);
+    int seen = 1;
+    while (!q.empty()) {
+        int u = q.front(); q.pop();
+        for (int v : adj[u]) {
+            if (!vis[v]) {
+                vis[v] = 1;
+                q.push(v);
+                seen++;
+            }
+        }
+    }
+    if (seen != n) {
+        cout << "NO\n";
+        return 0;
+    }
 
-//#include <iostream>
-//#include <cmath>
-//#include <iomanip>
-//#define _USE_MATH_DEFINES
-//#include <math.h>
-//
-//using namespace std;
-//
-//double sum_first(double epsilon, long long& iter) {
-//    double sum = 0;
-//    for (int n = 1; ; ++n) {
-//        double temp = 1.0 / (pow(n,2) + 1.0);
-//        sum += temp;
-//        iter++;
-//        if (temp < epsilon) break;
-//    }
-//
-//    return sum;
-//}
-//
-//double sum_second(double epsilon, long long& iter) {
-//    double sum = 0;
-//    for (int n = 1; ; ++n) {
-//        double temp = 1.0 / (pow(n, 4) * (pow(n,2) + 1.0));
-//        sum += temp ;
-//        iter++;
-//        if (temp <= epsilon) break; 
-//    }
-//
-//    return pow(M_PI, 2) / 6 - pow(M_PI, 4) / 90 + sum;
-//}
-//int main() {
-//    setlocale(LC_ALL, "RUS");
-//    double epsilon = 1e-10;
-//    long long iterations1 = 0, iterations2 = 0;
-//    double sum1 = 0, sum2 = 0;
-//    sum1 = sum_first(epsilon, iterations1);
-//    sum2 = sum_second(epsilon, iterations2);
-//    cout.precision(6);
-//    cout << "Первый способ: " << endl;
-//    cout << "Сумма ряда: " << sum1 << endl;
-//    cout << "Количество итераций: " << iterations1 << endl; 
-//    cout << "-------------------------" << endl;
-//    cout << "Второй способ: " << endl;
-//    cout << "Сумма ряда: " << sum2 << endl;
-//    cout << "Количество итераций: " << iterations2 << endl;
-//    return 0;
-//}
+    // Собираем угловые вершины (deg == 2)
+    vector<int> corner;
+    for (int i = 0; i < n; i++)
+        if (deg[i] == 2)
+            corner.push_back(i);
+
+    if (corner.size() != 4) {
+        cout << "NO\n";
+        return 0;
+    }
+
+    // Функция BFS для расчёта расстояний
+    auto bfs = [&](int start) {
+        const int INF = 1e9;
+        vector<int> dist(n, INF);
+        queue<int> qq;
+        dist[start] = 0;
+        qq.push(start);
+        while (!qq.empty()) {
+            int u = qq.front(); qq.pop();
+            for (int v : adj[u]) {
+                if (dist[v] == INF) {
+                    dist[v] = dist[u] + 1;
+                    qq.push(v);
+                }
+            }
+        }
+        return dist;
+    };
+
+    // От первого угла считаем все расстояния
+    vector<int> d0 = bfs(corner[0]);
+
+    // Находим противоположный угол (макс. расстояние)
+    int opp = corner[1];
+    int maxd = d0[opp];
+    for (int i = 2; i < 4; i++) {
+        if (d0[corner[i]] > maxd) {
+            maxd = d0[corner[i]];
+            opp = corner[i];
+        }
+    }
+
+    // Два оставшихся — на сторонах
+    vector<int> side;
+    for (int v : corner)
+        if (v != corner[0] && v != opp)
+            side.push_back(v);
+
+    int d1 = d0[side[0]];
+    int d2 = d0[side[1]];
+    int a = d1 + 1;
+    int b = d2 + 1;
+
+    // Проверка на произведение
+    if (1LL * a * b != n) {
+        swap(a, b);
+        if (1LL * a * b != n) {
+            cout << "NO\n";
+            return 0;
+        }
+    }
+
+    // Проверяем распределение степеней вершин
+    int cnt2 = 0, cnt3 = 0, cnt4 = 0;
+    for (int x : deg) {
+        if (x == 2)      cnt2++;
+        else if (x == 3) cnt3++;
+        else if (x == 4) cnt4++;
+        else {
+            cout << "NO\n";
+            return 0;
+        }
+    }
+
+    int exp2 = 4;
+    int exp3 = 2 * max(0, a - 2) + 2 * max(0, b - 2);
+    int exp4 = max(0, a - 2) * max(0, b - 2);
+
+    if (cnt2 == exp2 && cnt3 == exp3 && cnt4 == exp4) {
+        cout << "YES\n" << a << " " << b << "\n";
+    } else {
+        cout << "NO\n";
+    }
+
+    return 0;
+}
